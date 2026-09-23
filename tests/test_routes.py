@@ -26,6 +26,7 @@ Test cases can be run with the following:
 """
 import os
 import logging
+from urllib.parse import quote_plus
 from decimal import Decimal
 from unittest import TestCase
 from service import app
@@ -167,20 +168,7 @@ class TestProductRoutes(TestCase):
     # ADD YOUR TEST CASES HERE
     #
 
-    ######################################################################
-    # Utility functions
-    ######################################################################
-
-    def get_product_count(self):
-        """save the current number of products"""
-        response = self.client.get(BASE_URL)
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-        data = response.get_json()
-        # logging.debug("data = %s", data)
-        return len(data)
-
-
-        def test_get_product(self):
+    def test_get_product(self):
         """It should Get a single Product"""
         test_product = self._create_products(1)[0]
         response = self.client.get(f"{BASE_URL}/{test_product.id}")
@@ -194,7 +182,6 @@ class TestProductRoutes(TestCase):
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
         data = response.get_json()
         self.assertIn("was not found", data["message"])
-
 
     def test_update_product(self):
         """It should Update an existing Product"""
@@ -227,8 +214,7 @@ class TestProductRoutes(TestCase):
         new_count = self.get_product_count()
         self.assertEqual(new_count, product_count - 1)
 
-
-            def test_get_product_list(self):
+    def test_get_product_list(self):
         """It should Get a list of Products"""
         self._create_products(5)
         response = self.client.get(BASE_URL)
@@ -272,3 +258,15 @@ class TestProductRoutes(TestCase):
         self.assertEqual(len(data), available_count)
         for product in data:
             self.assertEqual(product["available"], True)
+
+    ######################################################################
+    # Utility functions
+    ######################################################################
+
+    def get_product_count(self):
+        """save the current number of products"""
+        response = self.client.get(BASE_URL)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        data = response.get_json()
+        # logging.debug("data = %s", data)
+        return len(data)
